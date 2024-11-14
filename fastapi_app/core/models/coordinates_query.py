@@ -3,7 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import JSON, Float
 
 
-class CircleQuery(TimestampMixin, Base):
+class CoordinatesQuery(TimestampMixin, Base):
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     radius: Mapped[float] = mapped_column(Float, nullable=False)

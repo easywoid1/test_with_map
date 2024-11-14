@@ -1,3 +1,3 @@
-__all__ = "CircleBase"
+__all__ = "CoordinatesBase"
 
-from .circle_schemas import CircleBase
+from .coordinates import CoordinatesBase  # noqa: F401

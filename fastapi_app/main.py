@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from core.models import db_helper
-from api.api_v1.circles import router as circles_router
+from api.api_v1.coordinates import router as coordinates_router
 
 
 @asynccontextmanager
@@ -19,11 +19,11 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
-async def hello_wrld():
+async def hello_wrld() -> dict:
     return {
         "message": "Hello, my friend, use /docs after url for better testing this app"
     }
-app.include_router(circles_router)
+app.include_router(coordinates_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8000, reload=True)
