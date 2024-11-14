@@ -17,6 +17,12 @@ async def lifespan(app: FastAPI):  # type: ignore
 
 app = FastAPI(lifespan=lifespan)
 
+
+@app.get("/")
+async def hello_wrld():
+    return {
+        "message": "Hello, my friend, use /docs after url for better testing this app"
+    }
 app.include_router(circles_router)
 
 if __name__ == "__main__":

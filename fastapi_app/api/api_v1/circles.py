@@ -1,13 +1,14 @@
 import numpy as np
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 from shapely.geometry import Polygon
 import pyproj
 import geopandas as gpd
+
+from crud.circles import create_query, get_query
 from core.models import db_helper
 from core.schemas.circle_schemas import CircleBase
-from core.models import CircleQuery
 import asyncio
 from functools import partial
 
@@ -49,13 +50,7 @@ async def get_polygon(
     """
     try:
         # Проверяем кэш
-        query = select(CircleQuery).where(
-            CircleQuery.latitude == circle.latitude,
-            CircleQuery.longitude == circle.longitude,
-            CircleQuery.radius == circle.radius,
-        )
-        cached_result = await session.execute(query)
-        result = cached_result.scalar_one_or_none()
+        result = await get_query(session=session, circle=circle)
 
         if result:
             return {"result": result.result}
@@ -63,14 +58,8 @@ async def get_polygon(
         await asyncio.sleep(10)
         geojson_output = await async_calculate_polygon(circle)
 
-        new_cache_entry = CircleQuery(
-            latitude=circle.latitude,
-            longitude=circle.longitude,
-            radius=circle.radius,
-            result=geojson_output,
-        )
-        session.add(new_cache_entry)
-        await session.commit()
+        # Кешируем запрос
+        await create_query(session, circle, geojson_output)
 
         return {"result": geojson_output}
 
